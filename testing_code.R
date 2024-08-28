@@ -10,3 +10,5 @@ usethis::use_vignette("my-vignette")
 install(build_vignettes = TRUE)
 devtools::build()
 # for installation: install.packages(path_to_file, repos = NULL, type="source")
+
+use_git()
