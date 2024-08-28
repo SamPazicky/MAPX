@@ -1,0 +1,11 @@
+Package: MAPX
+Type: Package
+Title: Meltome-assisted profiling of protein complexes
+Version: 0.0.1.0
+Encoding: UTF-8
+RoxygenNote: 7.3.1
+LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
