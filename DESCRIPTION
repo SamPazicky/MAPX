@@ -1,8 +1,26 @@
 Package: MAPX
 Type: Package
 Title: Meltome-assisted profiling of protein complexes
-Version: 0.0.1.0
+Version: 0.1.0.0
 Encoding: UTF-8
+Imports:
+  tidyverse,
+  visNetwork,
+  RCy3,
+  irr,
+  caret,
+  Hmisc,
+  pROC,
+  PRROC,
+  viridis,
+  gtools,
+  minpack.lm,
+  patchwork,
+  ggforce,
+  C50,
+  RWeka,
+  randomForest,
+  rpart  
 RoxygenNote: 7.3.1
 LazyData: true
 Suggests: 

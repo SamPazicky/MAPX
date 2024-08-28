@@ -3,7 +3,7 @@
 #' Transform a list of protein complexes into a pairwise interaction table.
 #' 
 #' @param complexes A list of vectors where each vector represents subunits of a protein complex.
-#' 
+#' @import tidyverse
 #' @return A data.frame with pair-wise interaction table.
 #' @examples 
 #' pairwise.table <- X.complexes.to.pairwise(list_of_complexes)

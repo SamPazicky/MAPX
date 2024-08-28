@@ -5,6 +5,7 @@
 #' 
 #' @param data A data.frame with pair-wise interaction table.
 #' @param scores.col Character string: Name of the columns with prediction values.
+#' @import tidyverse
 #' @return A data.frame with pair-wise interaction table.
 #' @examples 
 #' pairwise.table <- X.interconnect.network(averaged_predictions$predicted.dataset %>% filter(pred>=sug_cutoff))
