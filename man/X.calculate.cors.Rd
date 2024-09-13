@@ -9,7 +9,7 @@ X.calculate.cors(data = NULL, cor.type = "pearson")
 \arguments{
 \item{data}{Data frame with one column per temperature and protein IDs in row names.}
 
-\item{cor.type}{Type argument in Hmisc::rcorr}
+\item{cor.type}{'type' argument in Hmisc::rcorr}
 }
 \value{
 Data frame with pairwise protein interactions and R2 values

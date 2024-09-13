@@ -18,7 +18,7 @@
 #' @param p.adj.method Character string: One of the p.adj methods, see ?p.adjust. Default is "none".
 #' 
 #' @import tidyverse
-#' @import gtools
+#' @importFrom gtools mixedsort
 #' @import ggforce
 #' 
 #' @return PCA data and different supporting information.

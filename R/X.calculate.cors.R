@@ -3,9 +3,9 @@
 #' Using one of the network building algorithms, cluster initial network into individual protein complexes.
 #' 
 #' @param data Data frame with one column per temperature and protein IDs in row names.
-#' @param cor.type Type argument in Hmisc::rcorr
+#' @param cor.type 'type' argument in Hmisc::rcorr
 #' 
-#' @import Hmisc
+#' @importFrom Hmisc rcorr
 #' 
 #' @return Data frame with pairwise protein interactions and R2 values
 #' 

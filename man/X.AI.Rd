@@ -8,6 +8,7 @@ X.AI(
   data = NULL,
   complexes = list(),
   quality.data = NULL,
+  index = "semirandom",
   noPCs = 0,
   trials = 500,
   cluster.cut = 0.65,
@@ -21,7 +22,10 @@ X.AI(
 
 \item{complexes}{Named list: A list where each element is vector with proteins and the name of that element is the name of the protein complex.}
 
-\item{quality.data}{Data.frame with a column for protein and}
+\item{quality.data}{Data.frame with a column for protein and a quality indicator.}
+
+\item{index}{Character string: Either 'random' or 'semirandom'. 'random' will compare within-complex Euclidean distances with completely random
+distances. 'semirandom' will always use PC coordinates of a each subunit and compare them to random coordinates.}
 
 \item{noPCs}{Integer: How many principal components should be used for the assembly index calculation?}
 

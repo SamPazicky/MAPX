@@ -5,7 +5,9 @@
 #' @param data Data frame with features reduce by PCA. Columns are 'protein', and PC columns starting with 'PC'. Additional columns
 #' 'condition' and 'replicate' can be used.
 #' @param complexes Named list: A list where each element is vector with proteins and the name of that element is the name of the protein complex.
-#' @param quality.data Data.frame with a column for protein and 
+#' @param quality.data Data.frame with a column for protein and a quality indicator.
+#' @param index Character string: Either 'random' or 'semirandom'. 'random' will compare within-complex Euclidean distances with completely random
+#' distances. 'semirandom' will always use PC coordinates of a each subunit and compare them to random coordinates.
 #' @param noPCs Integer: How many principal components should be used for the assembly index calculation?
 #' @param trials Integer: How many random Euclidean distances should be calculated for the statistics?
 #' @param cluster.cut Numeric: At what height should the clustered data from each complex be cut? The largest cluster will be used to calculate
@@ -39,6 +41,7 @@ X.AI <- function(
     data=NULL,
     complexes=list(),
     quality.data=NULL,
+    index="semirandom",
     noPCs=0,
     trials=500,
     cluster.cut=0.65,
@@ -54,6 +57,8 @@ X.AI <- function(
           plot.margin=ggplot2::margin(5,5,5,5, "pt")
     )
   )
+  
+
   
   if(is.null(data)) {
     stop("Please include data")
@@ -100,6 +105,10 @@ X.AI <- function(
     }
   }
   
+  if(is.null(weights)) {
+    weights <- rep(1, ncol(data%>%dplyr::select(starts_with("PC"))))
+  }
+  
   if(length(setdiff(replicates, unique(quality.data$replicate)))>0 | 
      length(setdiff(conditions, unique(quality.data$condition)))>0 |
      length(setdiff(unique(quality.data$condition), conditions))>0 |
@@ -125,7 +134,7 @@ X.AI <- function(
       
       # Calculate complex Euclidean distances
       cat("Calculating Euclidean distances for protein complexes...")
-      complexEDs <- list()
+      complexEDs <- cpxEdists <- list()
       for(cpx in names(complexes)) {
         cpx.data <- cur.data %>%
           filter(protein %in% complexes[[cpx]])
@@ -136,28 +145,53 @@ X.AI <- function(
         cpx.quality.data <- cur.quality.data %>%
           filter(protein %in% complexes[[cpx]])
         
+        cpxI <- X.calculate.ED(cpx.data,cpx.quality.data,weights=weights,PCs=noPCs,cluster.cut=cluster.cut)
+        cpxEdists[[cpx]] <- cpxI$edists %>%
+          mutate(edist=log2(edist))
+        
         complexEDs[[cpx]] <- data.frame(
-          log2mean.complexED=log2(X.calculate.ED(cpx.data,cpx.quality.data,weights=weights,PCs=noPCs,cluster.cut=cluster.cut)$average.edist),
+          log2mean.complexED=log2(cpxI$average.edist),
           n=nrow(cpx.data),
           complex=cpx
         )
       }
+      
       complexEDs <- purrr::reduce(complexEDs,bind_rows) %>%
         na.omit()
+      cpxEdists <- data.table::rbindlist(cpxEdists, idcol="complex")
       if(nrow(complexEDs)<1) {
         cat("\rCalculating Euclidean distances for protein complexes... undetected, skipped\n")
         next
       }
       cat("\rCalculating Euclidean distances for protein complexes...done\n")
       
-      
-      # Calculate random Euclidean distances
-      cat("Calculating random Euclidean distances...\n")
-      randomEDs <- X.random.ED(cur.data,cur.quality.data,members=sort(unique(complexEDs$n)),trials=trials,cluster.cut=cluster.cut,weights=weights,PCs=noPCs)
-      
-      zstats[[as.character(cond)]][[as.character(rep)]] <- complexEDs %>%
-        left_join(randomEDs$summary,by="n") %>%
-        mutate(nosd=abs(log2mean.complexED-log2mean.randomED)/log2sd.randomED)
+      if(index=="random") {
+        # Calculate random Euclidean distances
+        cat("Calculating random Euclidean distances...\n")
+        randomEDs <- X.random.ED(cur.data,cur.quality.data,members=sort(unique(complexEDs$n)),trials=trials,cluster.cut=cluster.cut,weights=weights,PCs=noPCs)
+        
+        zstats[[as.character(cond)]][[as.character(rep)]] <- complexEDs %>%
+          left_join(randomEDs$summary,by="n") %>%
+          mutate(nosd=abs(log2mean.complexED-log2mean.randomED)/log2sd.randomED)
+      } else if(index=="semirandom") {
+        randomEDs <- X.semirandom.ED(cur.data,cur.quality.data,complex.data=cpxEdists, trials=trials)
+        zstats[[as.character(cond)]][[as.character(rep)]] <- cpxEdists %>%
+          filter(!is.infinite(edist)) %>%
+          group_by(complex) %>%
+          filter(n_distinct(protein)>1) %>%
+          ungroup() %>%
+          left_join(randomEDs$summary, by=c("complex","protein")) %>%
+          mutate(nosd=abs(edist-log2mean.semirandomED)/log2sd.semirandomED,log2sd.semirandomED) %>%
+          left_join(quality.data, by="protein") %>%
+          group_by(complex) %>%
+          dplyr::summarise(nosd.c=weighted.mean(nosd,quality)) %>%
+          ungroup() %>%
+          rename(nosd=nosd.c)
+        
+      } else {
+        stop("Attribute index can only be random or semirandom.")
+      }
+
     }
   }
   cat("Calculating assembly indeces...")
@@ -214,6 +248,4 @@ X.AI <- function(
     plots=zstats.plots
   )
   return(output)
-  
-  
 }

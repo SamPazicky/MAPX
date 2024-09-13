@@ -11,7 +11,6 @@
 #' @param eval.metric Character string: Evaluation metric to be used for evaluating the model performance. Options same as in X.evaluate.
 #' 
 #' @import tidyverse
-#' @import Hmisc
 #' 
 #' @return A list with four elements: $data is the data.frame with averaged predictions, $eval.metric is the integer specifying the
 #' resulting evaluation metric, $eval.data are underlying data for plotting the evaluation metric and $plot is the plot itself.
@@ -96,7 +95,7 @@ X.average.reps <- function(
     left_join(w.frame,by="rep") %>%
     rename(rep_score=!!sym(scores.col)) %>%
     group_by(protein1,protein2) %>%
-    dplyr::summarise(score=weighted.mean(rep_score,weight), .groups="keep") %>% #, sd=sqrt(Hmisc::wtd.var(rep_score,weight)) this just takes too long
+    dplyr::summarise(score=weighted.mean(rep_score,weight), .groups="keep") %>%
     ungroup()
  
   if(evaluate) {

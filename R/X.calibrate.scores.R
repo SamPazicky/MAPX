@@ -43,9 +43,7 @@ X.calibrate.scores <- function(
     data <- as.data.frame(data) %>%
       rename(score=!!sym(scores.col))
   }
-  if(is.null(standard.set)) {
-    stop("If evaluate is TRUE, include standard.set.")
-  } else {
+  if(!is.null(standard.set)) {
     standard.set <- as.data.frame(standard.set)
     if(is.na(labels.col)) {
       labels.col <- names(standard.set)[ncol(standard.set)]

@@ -4,7 +4,7 @@
 \alias{expand.grid.unique}
 \title{expand.grid.unique}
 \usage{
-\method{expand}{grid.unique}(x, y, include.equals = FALSE)
+expand.grid.unique(x, y, include.equals = FALSE)
 }
 \description{
 expand.grid.unique

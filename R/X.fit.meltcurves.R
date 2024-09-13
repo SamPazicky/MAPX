@@ -5,7 +5,7 @@
 #' @param data Data frame with one column for each temperature, starting with 'T' and followed by number and a column 'protein' with protein IDs.
 #' 
 #' @import tidyverse
-#' @import e1071
+#' @importFrom e1071 skewness
 #' @import minpack.lm
 #' 
 #' @return A list with four elements: $data with fitted data parameters, $all.data with connected table of input and output data,
@@ -27,7 +27,7 @@ X.fit.meltcurves=function(
     }
     data <- data %>% column_to_rownames("protein") %>%
       dplyr::select(starts_with("T"))
-    if(nrow(data)<6) {
+    if(ncol(data)<6) {
       stop("Less than five temperature columns found. The temperature column names must start with 'T' followed by a number.")
     }
     temperatures <- names(data) %>% str_remove("T") %>% as.numeric()
