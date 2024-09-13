@@ -13,7 +13,7 @@ X.semirandom.ED <- function(
     group_by(complex) %>%
     mutate(n=n_distinct(protein)) %>%
     ungroup() %>%
-    left_join(cur.data, by="protein")
+    left_join(data, by="protein")
   
   dists <- summaries <- vector("list",length=nrow(complex.data))
   
