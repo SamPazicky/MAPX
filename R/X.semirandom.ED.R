@@ -4,10 +4,8 @@ X.semirandom.ED <- function(
     complex.data=NULL,
     trials=1000,
     weights=NULL,
-    PCs=0,
-    stats=TRUE
+    PCs=0
 ) {
-  
   
   complex.data <- complex.data %>%
     group_by(complex) %>%
@@ -47,23 +45,6 @@ X.semirandom.ED <- function(
     close(pb)
   }
   summary <- purrr::reduce(summaries,bind_rows)
-  
-  if(stats) {
-    nstats <- list()
-    for(no_subunits in names(dists)) {
-      aemin <- dists[[no_subunits]] %>% min()
-      ae5 <- dists[[no_subunits]] %>% quantile(0.05)
-      ae10 <- dists[[no_subunits]] %>% quantile(0.10)
-      aemax <- dists[[no_subunits]] %>% max()
-      nstats[[as.character(no_subunits)]] <- data.frame(
-        aemin=aemin, ae5=ae5, ae10=ae10,aemax=aemax
-      ) %>% mutate(no_subunits=no_subunits)
-    }
-    stats_all <- purrr::reduce(nstats,bind_rows) %>% remove_rownames()
-  } else {
-    stats_all=NA
-  }
-  
-  output <- list(data=dists,summary=summary,stats=stats_all)
+  output <- list(data=dists,summary=summary)
   return(output)
 }

@@ -57,8 +57,7 @@ X.AI <- function(
           plot.margin=ggplot2::margin(5,5,5,5, "pt")
     )
   )
-  
-
+  centroid=ifelse(index=="random",TRUE,FALSE)
   
   if(is.null(data)) {
     stop("Please include data")
@@ -145,7 +144,16 @@ X.AI <- function(
         cpx.quality.data <- cur.quality.data %>%
           filter(protein %in% complexes[[cpx]])
         
-        cpxI <- X.calculate.ED(cpx.data,cpx.quality.data,weights=weights,PCs=noPCs,cluster.cut=cluster.cut)
+        unzero_edists=TRUE
+        cur.cluster.cut <- cluster.cut
+        while(unzero_edists) {
+          cpxI <- X.calculate.ED(cpx.data,cpx.quality.data,centroid=centroid,weights=weights,PCs=noPCs,cluster.cut=cur.cluster.cut)
+          if(any(cpxI$edists$edist==0)) {
+            cur.cluster.cut <- cur.cluster.cut+1
+          } else {
+            unzero_edists=FALSE
+          }
+        }
         cpxEdists[[cpx]] <- cpxI$edists %>%
           mutate(edist=log2(edist))
         
@@ -174,7 +182,7 @@ X.AI <- function(
           left_join(randomEDs$summary,by="n") %>%
           mutate(nosd=abs(log2mean.complexED-log2mean.randomED)/log2sd.randomED)
       } else if(index=="semirandom") {
-        randomEDs <- X.semirandom.ED(cur.data,cur.quality.data,complex.data=cpxEdists, trials=trials)
+        randomEDs <- X.semirandom.ED(cur.data,cur.quality.data,complex.data=cpxEdists, trials=trials, weights=weights,PCs=PCs)
         zstats[[as.character(cond)]][[as.character(rep)]] <- cpxEdists %>%
           filter(!is.infinite(edist)) %>%
           group_by(complex) %>%
@@ -182,8 +190,8 @@ X.AI <- function(
           ungroup() %>%
           left_join(randomEDs$summary, by=c("complex","protein")) %>%
           mutate(nosd=abs(edist-log2mean.semirandomED)/log2sd.semirandomED,log2sd.semirandomED) %>%
-          left_join(quality.data, by="protein") %>%
-          group_by(complex) %>%
+          left_join(cur.quality.data, by="protein") %>%
+          group_by(complex,n) %>%
           dplyr::summarise(nosd.c=weighted.mean(nosd,quality)) %>%
           ungroup() %>%
           rename(nosd=nosd.c)
@@ -209,14 +217,13 @@ X.AI <- function(
   for(pc in plot.complexes) {
     if(y.trans) {
       zstats.plots[[pc]] <- zstats.table %>%
-        mutate(condition=str_remove(condition,"tp")) %>%
         mutate(condition=factor(condition, levels=gtools::mixedsort(unique(condition)))) %>%
         filter(complex==pc) %>%
-        mutate(across(ends_with("AF"), log2)) %>%
-        ggplot(aes(x=condition,y=AF)) +
-        geom_line(inherit.aes=FALSE, aes(x=condition,y=mean.AF,group=complex)) +
+        mutate(across(ends_with("AI"), log2)) %>%
+        ggplot(aes(x=condition,y=AI)) +
+        geom_line(inherit.aes=FALSE, aes(x=condition,y=mean.AI,group=complex)) +
         geom_point(aes(color=replicate, size=rel.n*6)) +
-        scale_y_continuous(name="Assembly index", limits=c(min(c(-5,min(zstats.table$AF))),max(5,max(zstats.table$AF)))) +
+        scale_y_continuous(name="Assembly index", limits=c(min(c(-5,min(log2(zstats.table$AI)))),max(5,max(log2(zstats.table$AI))))) +
         scale_x_discrete(name="Timepoint (hpi)",drop=FALSE) +
         scale_size_continuous(range=c(0.5,4), limits=c(0,6), guide="none") +
         scale_color_manual(values=c("red3","blue2","green3")) +
@@ -229,8 +236,8 @@ X.AI <- function(
         mutate(condition=str_remove(condition,"tp")) %>%
         mutate(condition=factor(condition, levels=gtools::mixedsort(unique(condition)))) %>%
         filter(complex==pc) %>%
-        ggplot(aes(x=condition,y=AF)) +
-        geom_line(inherit.aes=FALSE, aes(x=condition,y=mean.AF,group=complex)) +
+        ggplot(aes(x=condition,y=AI)) +
+        geom_line(inherit.aes=FALSE, aes(x=condition,y=mean.AI,group=complex)) +
         geom_point(aes(color=replicate, size=rel.n*6)) +
         scale_y_continuous(name="Assembly index", limits=c(0,16)) +
         scale_x_discrete(name="Timepoint (hpi)",drop=FALSE) +
