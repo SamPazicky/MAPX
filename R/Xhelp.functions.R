@@ -529,7 +529,7 @@ Xdownsample <- function(data,factor) {
   return(newdata)
 }
 
-fit_sigmoid01 <- function(data) {
+fit_sigmoid01 <- function(data, b_guess=-25) {
   if(length(data$x)!=length(data$y)) {
     stop("Vectors x and y do not have the same length.")
   }
@@ -563,7 +563,6 @@ fit_sigmoid01 <- function(data) {
   #     e_vec <- 5
   #   }
   # }
-  b_guess=-25
   #guess slope
   # b_guess <- ((data$y[e_vec-1]-data$y[e_vec])*10)^3/7
   # if(c_guess-d_guess>0) {

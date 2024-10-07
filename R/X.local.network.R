@@ -2,7 +2,7 @@
 #'
 #' Calculate and plot a local subnetwork of a specific protein or proteins of interest.
 #' 
-#' @param data List of data frame with columns for protein1, protein2 and a column with scores
+#' @param data Data frame with columns for protein1, protein2 and a column with scores
 #' @param proteins Vector: proteins whose local network should be plotted.
 #' @param cutoff Numeric: Probabilities cutoff applied to the data.
 #' @param scores.col Character string: Name of the columns with prediction values.

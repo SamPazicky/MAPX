@@ -21,7 +21,7 @@ X.local.network(
 )
 }
 \arguments{
-\item{data}{List of data frame with columns for protein1, protein2 and a column with scores}
+\item{data}{Data frame with columns for protein1, protein2 and a column with scores}
 
 \item{proteins}{Vector: proteins whose local network should be plotted.}
 

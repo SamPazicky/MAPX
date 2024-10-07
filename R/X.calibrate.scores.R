@@ -60,6 +60,18 @@ X.calibrate.scores <- function(
     mutate(midpoint=(0:49/50+0.01)[1:nrow(.)])
   tofit.data <- calibration_data%>%dplyr::select(midpoint,prob)%>%setNames(c("x","y"))
   prob_model <- fit_sigmoid01(tofit.data)
+  if(class(prob_model)=="try-error") {
+    bg=-1
+    while(bg>-30) {
+      prob_model <- fit_sigmoid01(tofit.data, b_guess=bg)
+      bg=bg-1
+    }
+  }
+  if(class(prob_model)=="try-error") {
+    output <- list(data=data,plot=NULL,model=NULL)
+    message("Cannot be calibrated")
+    return(output)
+  }
   # prob_model <- nls(formula=y~(0+(1/(1+exp(b*(log(x)-log(e)))))), data=tofit.data,
   #                   start=list(b=-4,e=0.1))
   predict_line <- data.frame(x=1:10000/10000)

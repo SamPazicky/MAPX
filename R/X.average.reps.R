@@ -36,7 +36,7 @@ X.average.reps <- function(
       message("There is only one replicate in predictions, no need to average.")
       cat("Evaluating...\n")
       to.evaluate <- data[[1]] %>%
-        cross_join(standard.set, vars=c("protein1","protein2"), mode="inner")
+        MAPX::cross_join(standard.set, vars=c("protein1","protein2"), mode="inner")
       
       eval <- X.evaluate(to.evaluate, scores.col=scores.col,labels.col=labels.col, eval.metric=eval.metric, plot=TRUE)
       
@@ -91,12 +91,18 @@ X.average.reps <- function(
   }
   
   cat("Averaging...\n")
-  av.data <- list_rbind(data, names_to="rep") %>%
+  av.data <- data %>%
+    imap(
+      ~ .x %>% dplyr::select(starts_with("protein"),all_of(scores.col)) %>% setNames(c("protein1","protein2",paste0("score",.y)))
+      ) %>%
+    purrr::reduce(MAPX::cross_join, vars=c("protein1","protein2"), mode="full") %>% 
+    pivot_longer(starts_with("score"), names_to="rep",values_to="pred") %>%
+    mutate(rep=str_remove(rep,"score")) %>%
     left_join(w.frame,by="rep") %>%
-    rename(rep_score=!!sym(scores.col)) %>%
-    group_by(protein1,protein2) %>%
-    dplyr::summarise(score=weighted.mean(rep_score,weight), .groups="keep") %>%
+    group_by(protein1,protein2) %>% 
+    dplyr::summarise(score=weighted.mean(pred,weight,na.rm=TRUE), .groups="keep") %>% 
     ungroup()
+  
  
   if(evaluate) {
     cat("Evaluating...\n")
