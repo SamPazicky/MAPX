@@ -140,7 +140,8 @@ X.tune.tree <- function(
     mutate(complex=factor(complex,levels=c(0,1))) %>%
     group_by(complex) %>%
     mutate(Folds=createFolds(1:n(),k=cross.folds,list=FALSE)) %>%
-    ungroup()
+    ungroup() %>%
+    dplyr::select(!starts_with("protein"))
   
   # create a loop table
   cur.options <- mget(tree.options[[tree.type]]) %>%

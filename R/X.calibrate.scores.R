@@ -64,7 +64,11 @@ X.calibrate.scores <- function(
     bg=-1
     while(bg>-30) {
       prob_model <- fit_sigmoid01(tofit.data, b_guess=bg)
-      bg=bg-1
+      if(class(prob_model)!="try-error") {
+        break
+      } else {
+        bg=bg-1
+      }
     }
   }
   if(class(prob_model)=="try-error") {

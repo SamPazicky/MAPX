@@ -76,6 +76,10 @@ X.crosstrain.tree = function(
       mutate(across(where(is.numeric), ~ ifelse(is.na(.x),-1000000,.x))) %>%
       mutate(across(where(is.character), ~ ifelse(is.na(.x), "NAVALUE",.x)))
     
+    standard.set <- standard.set %>%
+      mutate(across(where(is.numeric), ~ ifelse(is.na(.x),-1000000,.x))) %>%
+      mutate(across(where(is.character), ~ ifelse(is.na(.x), "NAVALUE",.x)))
+    
   }
   
   functionname <- paste0("Xmodel.tree.",tree.type)
@@ -115,6 +119,8 @@ X.crosstrain.tree = function(
         filter(is.na(complex)) %>%
         dplyr::select(!complex)
       
+      traindata.repmod <- traindata.repmod %>%
+        dplyr::select(!starts_with("protein"))
       
       invisible(capture.output(
         modelresult <- do.call(functionname,list(data=traindata.repmod)%>%append(train.pars))
