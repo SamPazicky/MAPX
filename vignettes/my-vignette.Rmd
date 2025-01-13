@@ -235,20 +235,20 @@ GSpos <- X.assemble.posstandard(MAPX::gold.standard, sep=";")
 ```
 
 ### Assemble negative gold standard
-The most comprehensive approach to assemble the gold standard of non-interacting proteins is using GO terms: the proteins that do not interact cannot share GO terms. A care should be taken when predicting interactome for organisms without well annotated proteome - in such cases, using GO terms from a similar organism basde on orthology would be a better strategy. The function expects a data frame with the first column containing protein IDs and the second column containing comma-separated GO terms.
-The following lines take a database from plasmoDB and prepares it for MAPX commands. Next, X.assemble.negstandard is used to assemble the standard of non-interacting proteins.
+The most comprehensive approach to assemble the gold standard of non-interacting proteins is using GO terms: the proteins that do not interact cannot share GO terms. A care should be taken when predicting interactome for organisms without well annotated proteome - in such cases, using GO terms from a similar organism based on orthology would be a better strategy. The function expects a data frame with the first column containing protein IDs and the second column containing comma-separated GO terms.
+The following lines take a database from plasmoDB and prepares it for MAPX commands. Next, `X.assemble.negstandard` is used to assemble the standard of non-interacting proteins.
 
-```{neg.standard}
+```{r neg.standard}
 GOterms <-  MAPX::plasmoDB_data %>%
   dplyr::select(source_id,contains("GO", ignore.case=FALSE)) %>% # selects source_id column and all GO columns
   dplyr::select(contains("id")) %>% # selects all columns that contain id (gets rid of GO term descriptors)
   tidyr::unite("GO",contains("GO"),sep=";") %>% # connects all GO terms to semi-colon separate column "GO"
-  #option 1: do not use any proteins that have N/A in at least on of the GO terms
+  #option 1: do not use any proteins that have N/A in at least one of the GO terms
   mutate(GO=ifelse(str_detect(GO,"N/A"),"",GO)) %>%
   #option 2: use everything. The algorithm will exclude those that have no GO term at all.
   # mutate(GO=ifelse(GO=="N/A;N/A;N/A","N/A",GO)) %>% # converts rows without GO to N/A
   # mutate(GO=str_remove_all(GO,"N/A;")) %>% # removes all N/As followed by semi-colon
-  # mutate(GO=str_remove_all(GO,";N/A")) %>% # removes all N/As at the and of the row
+  # mutate(GO=str_remove_all(GO,";N/A")) %>% # removes all N/As at the end of the row
   mutate(GO=ifelse(GO=="N/A","",GO)) %>%
   rename(protein=source_id) %>%
   mutate(protein=str_remove(protein,".[[:digit:]]$")) # removes '.1' at the end of the IDs
