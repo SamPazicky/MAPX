@@ -245,7 +245,6 @@ X.plot.meltcurves <- function(
             patchwork::wrap_plots(pdfplots[((20*page)-19):(20*page)], ncol = 4, nrow=5) + 
             patchwork::plot_spacer() +
             patchwork::wrap_elements(x_lab) +
-            # patchwork::guide_area() + 
             patchwork::plot_spacer() +
             patchwork::wrap_elements(legend) +
             patchwork::plot_layout(guides = 'collect', design=layout, heights=c(1,-0.05,0.1,-0.08,0.1))

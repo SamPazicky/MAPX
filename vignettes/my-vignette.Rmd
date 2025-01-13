@@ -237,6 +237,7 @@ GSpos <- X.assemble.posstandard(MAPX::gold.standard, sep=";")
 ### Assemble negative gold standard
 The most comprehensive approach to assemble the gold standard of non-interacting proteins is using GO terms: the proteins that do not interact cannot share GO terms. A care should be taken when predicting interactome for organisms without well annotated proteome - in such cases, using GO terms from a similar organism basde on orthology would be a better strategy. The function expects a data frame with the first column containing protein IDs and the second column containing comma-separated GO terms.
 The following lines take a database from plasmoDB and prepares it for MAPX commands. Next, X.assemble.negstandard is used to assemble the standard of non-interacting proteins.
+
 ```{neg.standard}
 GOterms <-  MAPX::plasmoDB_data %>%
   dplyr::select(source_id,contains("GO", ignore.case=FALSE)) %>% # selects source_id column and all GO columns
