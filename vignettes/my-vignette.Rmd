@@ -92,7 +92,7 @@ MCdata.scaled$plot
 ggsave("MCdata_normalization.png",MCdata.scaled$plot)
 ```
 The scaled data are svaed in a data frame:
-```{r tp28rep1_scaling2}
+```{r tp28rep1_scaling3}
  MCdata.scaled$data %>% head()
 ```
 
