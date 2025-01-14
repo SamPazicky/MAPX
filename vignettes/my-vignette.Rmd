@@ -350,7 +350,7 @@ The clusters are then refined cluster-by-cluster.
 ```{r build0.5_refine}
 network.refined <- X.refine.complexes(data=network.built$data, algo="SCBP",final.stats=TRUE,
                                         standard.set=GS, rep.steps=20)
-````
+```
 ### Map post-processing
 The post-processing algorithms remove loosely-connected subunits and split loosely-connected clusters.
 ```{r build0.5_postprocess}
