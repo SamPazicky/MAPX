@@ -46,12 +46,12 @@ X.plot.network=function (
       cat("No scores column selected. Selecting the last column:",scores.col,"\n")
     }
     data <- as.data.frame(data) %>%
-      rename(score=!!sym(scores.col))
+      dplyr::rename(score=!!sym(scores.col))
     if(!"protein1" %in% names(data) | !"protein2" %in% names(data)) {
       stop("Data must contain columns protein1 and protein2.")
     }
     data <- data %>%
-      rename(source=protein1) %>% rename(target=protein2)
+      dplyr::rename(source=protein1) %>% dplyr::rename(target=protein2)
   }
   
   if(!is.null(standard.set)) {
@@ -64,7 +64,7 @@ X.plot.network=function (
       stop("Standard set must contain columns protein1 and protein2.")
     }
     standard.set <- standard.set %>%
-      rename(source=protein1) %>% rename(target=protein2)
+      dplyr::rename(source=protein1) %>% dplyr::rename(target=protein2)
   }
 
   if(!"protein" %in% names(annotation)) {
@@ -105,7 +105,7 @@ X.plot.network=function (
   # define nodes - this is just a table of proteins that are used in data as well. The Accession codes need to be called "id".
   # in the first line, I use the list of data to define which proteins should be listed in nodes
   nodes <- data.frame(id=unique(c(data%>%pull(source),data%>%pull(target)))) %>%
-    left_join(annotation%>%rename(id=protein))
+    left_join(annotation%>%dplyr::rename(id=protein))
   
   # print(paste0("Building protein network for Plasmodium falciparum: timepoint ", tp, ", replicate ", rp))
   # the following code creates the network
