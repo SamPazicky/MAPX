@@ -52,14 +52,14 @@ X.local.network <- function(
       cat("No scores column selected. Selecting the last column:",scores.col,"\n")
     }
     data <- as.data.frame(data) %>%
-      rename(score=!!sym(scores.col))
+      rename_with(~ "score", all_of(scores.col))
     if(is.na(condition.col)) {
       data <- data %>%
         mutate(condition=1)
       min.conditions <- 1
     } else {
       data <- data %>%
-        rename(condition=!!sym(condition.col))
+        rename_with(~ "condition", all_of(condition.col))
     }
     wdata <- data %>%
       dplyr::select(protein1,protein2,score,condition)
@@ -146,11 +146,11 @@ X.local.network <- function(
       visNodes(scaling = list(label = list(enabled = T)))
     
     plot.path <- ifelse(endsWith(plot.path,"/"),plot.path,paste0(plot.path,"/"))
-
+    
     visSave(vis,file=paste0(plot.path,"/",protein,".html"), selfcontained=TRUE)
     
   } else if (plot=="cytoscape") {
-  
+    
     MAPX::X.plot.network(data=ndata,scores.col="score",annotation=plot.annotation,design.params=plot.design.params,
                          export.destination=plot.path,cytoscape.path=plot.cytoscape.path,network.collection=protein, network.name=plot.name,
                          cytoscape.waittime=plot.cytoscape.waittime)
