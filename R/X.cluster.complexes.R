@@ -22,7 +22,7 @@ X.cluster.complexes <- function(
       scores.col <- names(data)[ncol(data)]
     }
     data <- as.data.frame(data) %>%
-      rename(score=!!sym(scores.col))
+      dplyr::rename(score=!!sym(scores.col))
   }
   
   # initiate the building

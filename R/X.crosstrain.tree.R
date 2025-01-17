@@ -59,7 +59,7 @@ X.crosstrain.tree = function(
       cat("No labels column selected. Selecting the last column:",labels.col,"\n")
     }
     standard.set <- standard.set %>%
-      rename(complex=!!sym(labels.col))
+      dplyr::rename(complex=!!sym(labels.col))
     if(length(setdiff(unique(standard.set$complex),c(0,1)))>0) {
       stop("The label must contain values 0 and 1 for non-interacting and interacting protein pairs, respectively.")
     } else {

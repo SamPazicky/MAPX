@@ -56,18 +56,18 @@ X.evaluate <- function(
     if(is.na(labels.col)) {
       cat("Column labels not specified. Taking the last column.\n")
       data <- data %>%
-        rename(labels=names(.)[ncol(.)])
+        dplyr::rename(labels=names(.)[ncol(.)])
     } else {
       data <- data %>%
-        rename(labels=!!sym(labels.col))
+        dplyr::rename(labels=!!sym(labels.col))
     }
     if(is.na(scores.col)) {
       cat("Column with scores not specified. Taking the first column.\n")
       data <- data %>%
-        rename(score=names(.)[1])
+        dplyr::rename(score=names(.)[1])
     } else {
       data <- data %>%
-        rename(score=!!sym(scores.col))
+        dplyr::rename(score=!!sym(scores.col))
     }
     data <- data %>% dplyr::select(score,labels)
     if(length(setdiff(unique(data$labels),c(0,1)))>0) {

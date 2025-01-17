@@ -44,7 +44,7 @@ X.network.stats = function(
     if(is.na(scores.col)) {
       scores.col <- names(data)[ncol(data)]
     }
-    data <- data %>% rename(score=!!sym(scores.col))
+    data <- data %>% dplyr::rename(score=!!sym(scores.col))
   }
   
   
@@ -118,10 +118,10 @@ X.network.stats = function(
       
       # put that vector in data frame (fragment.data) - one standard complex per column
       if(nrow(fragment.data)==0) {
-        fragment.data <- as.data.frame(cur.vec)%>%rename(!!sym(as.character(stand.cpx)):=cur.vec)
+        fragment.data <- as.data.frame(cur.vec)%>%dplyr::rename(!!sym(as.character(stand.cpx)):=cur.vec)
       } else {
         fragment.data <- bind_cols(fragment.data, 
-                                   as.data.frame(cur.vec)%>%rename(!!sym(as.character(stand.cpx)):=cur.vec)
+                                   as.data.frame(cur.vec)%>%dplyr::rename(!!sym(as.character(stand.cpx)):=cur.vec)
         )
       }
       

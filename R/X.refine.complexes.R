@@ -45,7 +45,7 @@ X.refine.complexes <- function(
       
     }
     data <- as.data.frame(data) %>%
-      rename(score=!!sym(scores.col))
+      dplyr::rename(score=!!sym(scores.col))
   }
   
   
@@ -110,7 +110,7 @@ X.refine.complexes <- function(
       #average
       all.complexes.table.rearranged[[cmplx]] <- purrr::reduce(complexes.table.rearranged,bind_rows,.id="itr") %>%
         group_by(protein1, protein2) %>%
-        rename(itr_score=score) %>%
+        dplyr::rename(itr_score=score) %>%
         dplyr::summarise(count=n(), .groups="keep") %>%
         ungroup() %>%
         cross_join(data%>%dplyr::select(starts_with("protein"),score), vars=paste0("protein",1:2),mode="left") %>%
@@ -124,7 +124,7 @@ X.refine.complexes <- function(
     
     complexes_table <- purrr::reduce(all.complexes.table.rearranged, bind_rows)
     grouped_data <- complexes_table %>% 
-      dplyr::select(starts_with("protein"),prediction) %>% rename(score=prediction) %>% arrange(desc(score))
+      dplyr::select(starts_with("protein"),prediction) %>% dplyr::rename(score=prediction) %>% arrange(desc(score))
 
     #
     # SHUFFLE COMPLEXES BY scores. Parameters: rep.steps, SP.shift
@@ -160,7 +160,7 @@ X.refine.complexes <- function(
       #average
       all.complexes.table.rearranged[[cmplx]] <- purrr::reduce(complexes.table.rearranged,bind_rows,.id="itr") %>%
         group_by(protein1, protein2) %>%
-        rename(itr_score=score) %>%
+        dplyr::rename(itr_score=score) %>%
         dplyr::summarise(count=n(), score=mean(itr_score,na.rm=TRUE), .groups="keep") %>%
         ungroup() %>%
         mutate(prediction=count/rep.steps*score) %>%
@@ -169,7 +169,7 @@ X.refine.complexes <- function(
     
     complexes_table <- purrr::reduce(all.complexes.table.rearranged, bind_rows)
     grouped_data <- complexes_table %>% 
-      dplyr::select(starts_with("protein"),prediction) %>% rename(score=prediction) %>% arrange(desc(score))
+      dplyr::select(starts_with("protein"),prediction) %>% dplyr::rename(score=prediction) %>% arrange(desc(score))
     
   }
   

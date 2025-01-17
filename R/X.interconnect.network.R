@@ -28,7 +28,7 @@ X.interconnect.network <- function(
     if(is.na(scores.col)) {
       scores.col <- names(data)[ncol(data)]
     }
-    data <- data %>% rename(score=!!sym(scores.col)) %>% dplyr::select("protein1","protein2","score")
+    data <- data %>% dplyr::rename(score=!!sym(scores.col)) %>% dplyr::select("protein1","protein2","score")
   }
   
   complexes <- X.pairwise.to.complexes(data)

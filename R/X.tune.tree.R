@@ -90,7 +90,7 @@ X.tune.tree <- function(
       stop("Label must be a column name of the data.")
     } else {
       data <- data %>%
-        rename(complex=!!sym(labels.col)) %>%
+        dplyr::rename(complex=!!sym(labels.col)) %>%
         mutate(complex=as.factor(complex))
     }
     if(length(setdiff(unique(data$complex),c(0,1)))>0) {

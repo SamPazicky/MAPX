@@ -23,7 +23,7 @@
 #' @examples 
 #' local.subnetwork <- X.local.network(calibrated.model$data%>%dplyr::select(!score),"PF3D7_0412200",
 #'             plot="cytoscape",
-#'             plot.annotation=plasmoDB_data%>%rename(protein=Accession),
+#'             plot.annotation=plasmoDB_data%>%dplyr::rename(protein=Accession),
 #'             plot.cytoscape.path="C://Program Files/Cytoscape_v3.9.1/Cytoscape.exe")
 #' @export
 #' 
@@ -124,7 +124,7 @@ X.local.network <- function(
     
     nodes <- data.frame(protein=nproteins) %>%
       left_join(plot.annotation) %>%
-      rename(id=protein) %>%
+      dplyr::rename(id=protein) %>%
       # left_join(plasmoDB%>%setNames(c("id","description"))) %>%
       mutate(shape="circle") %>%
       mutate(color=ifelse(id==protein,"red","gray")) %>%

@@ -48,7 +48,7 @@ X.postprocess = function(
       cat("No scores column selected. Selecting the last column:",scores.col,"\n")
     }
     data <- as.data.frame(data) %>%
-      rename(score=!!sym(scores.col))
+      dplyr::rename(score=!!sym(scores.col))
   }
   
   

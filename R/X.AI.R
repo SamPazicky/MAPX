@@ -30,7 +30,7 @@
 #' }
 #' quality.data <- all.fitdata.frame %>%
 #'   dplyr::select(protein,condition,replicate,R2) %>%
-#'   rename(quality=R2)
+#'   dplyr::rename(quality=R2)
 #'
 #' data.AIs <- X.AI(data.PCAs$data,complexes, quality.data)
 #' 
@@ -194,7 +194,7 @@ X.AI <- function(
           group_by(complex,n) %>%
           dplyr::summarise(nosd.c=weighted.mean(nosd,quality)) %>%
           ungroup() %>%
-          rename(nosd=nosd.c)
+          dplyr::rename(nosd=nosd.c)
         
       } else {
         stop("Attribute index can only be random or semirandom.")
@@ -205,7 +205,7 @@ X.AI <- function(
   cat("Calculating assembly indeces...")
   zstats.table <- lapply(zstats, function(x) data.table::rbindlist(x,idcol ="replicate")) %>%
     data.table::rbindlist(idcol="condition") %>%
-    rename(AI=nosd) %>%
+    dplyr::rename(AI=nosd) %>%
     group_by(complex,condition) %>%
     mutate(mean.AI=mean(AI)) %>%
     ungroup() %>%

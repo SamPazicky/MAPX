@@ -68,7 +68,7 @@ X.average.crossmodels <- function(
   }
   cat("Averaging scores...\n")
   av.data <- data %>%
-    rename(subscore=score) %>%
+    dplyr::rename(subscore=score) %>%
     group_by(protein1,protein2) %>%
     summarise(score=mean(subscore,na.rm=TRUE)) %>%
     ungroup()

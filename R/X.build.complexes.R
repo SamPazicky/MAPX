@@ -49,7 +49,7 @@ X.build.complexes <- function(
       cat("No scores column selected. Selecting the last column:",scores.col,"\n")
     }
     data <- as.data.frame(data) %>%
-      rename(score=!!sym(scores.col))
+      dplyr::rename(score=!!sym(scores.col))
   }
   
   
@@ -119,7 +119,7 @@ X.build.complexes <- function(
     #average
     complexes_table_ref <- purrr::reduce(complexes_table,bind_rows,.id="itr") %>%
       group_by(protein1, protein2) %>%
-      rename(itr_score=score)
+      dplyr::rename(itr_score=score)
     if(SP.finalpreds=="randomized") {
       complexes_table_ref <- complexes_table_ref %>%
         dplyr::summarise(count=n(), score=mean(itr_score,na.rm=TRUE), .groups="keep") %>%
@@ -137,7 +137,7 @@ X.build.complexes <- function(
       dplyr::select(starts_with("protein"),count,score,prediction)
     
     # final building step with simple algorithm
-    grouped_data <- complexes_table_ref %>% dplyr::select(starts_with("protein"),prediction) %>% rename(score=prediction) %>% arrange(desc(score))
+    grouped_data <- complexes_table_ref %>% dplyr::select(starts_with("protein"),prediction) %>% dplyr::rename(score=prediction) %>% arrange(desc(score))
     complexes=list()
     building="inprogress"
     # code follows after the if-elses.
@@ -159,7 +159,7 @@ X.build.complexes <- function(
       
       # shuffle
       if(itr==1) {
-        grouped_data_mod <- grouped_data %>% rename(pseudoscore=score)
+        grouped_data_mod <- grouped_data %>% dplyr::rename(pseudoscore=score)
       } else {
         grouped_data_mod <- grouped_data %>% arrange(desc(score)) %>% 
           mutate(row_id=row_number()) %>% 
@@ -178,7 +178,7 @@ X.build.complexes <- function(
     #average
     complexes_table_ref <- purrr::reduce(complexes_table,bind_rows,.id="itr") %>%
       group_by(protein1, protein2) %>%
-      rename(itr_score=score) %>%
+      dplyr::rename(itr_score=score) %>%
       dplyr::summarise(count=n(), .groups="keep") %>%
       ungroup() %>%
       cross_join(data%>%dplyr::select(starts_with("protein"),score), vars=paste0("protein",1:2),mode="left") %>%
@@ -186,7 +186,7 @@ X.build.complexes <- function(
       dplyr::select(starts_with("protein"),count,score,prediction)
     
     # final building step with simple algorithm
-    grouped_data <- complexes_table_ref %>% dplyr::select(starts_with("protein"),prediction) %>% rename(score=prediction) %>% arrange(desc(score))
+    grouped_data <- complexes_table_ref %>% dplyr::select(starts_with("protein"),prediction) %>% dplyr::rename(score=prediction) %>% arrange(desc(score))
     complexes=list()
     building="inprogress"
     # code follows after the if-elses.
@@ -221,14 +221,14 @@ X.build.complexes <- function(
     #average
     complexes_table_ref <- purrr::reduce(complexes_table,bind_rows,.id="itr") %>%
       group_by(protein1, protein2) %>%
-      rename(itr_score=score) %>%
+      dplyr::rename(itr_score=score) %>%
       dplyr::summarise(count=n(), score=mean(itr_score,na.rm=TRUE), .groups="keep") %>%
       ungroup() %>%
       mutate(prediction=count/rep.steps*score) %>%
       dplyr::select(starts_with("protein"),count,score,prediction)
     
     # final building step with simple algorithm
-    grouped_data <- complexes_table_ref %>% dplyr::select(starts_with("protein"),prediction) %>% rename(score=prediction) %>% arrange(desc(score))
+    grouped_data <- complexes_table_ref %>% dplyr::select(starts_with("protein"),prediction) %>% dplyr::rename(score=prediction) %>% arrange(desc(score))
     complexes=list()
     building="inprogress"
     # code follows after the if-elses.
