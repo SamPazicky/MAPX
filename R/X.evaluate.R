@@ -59,7 +59,7 @@ X.evaluate <- function(
         dplyr::rename(labels=names(.)[ncol(.)])
     } else {
       data <- data %>%
-        dplyr::rename(labels=!!sym(labels.col))
+        rename_with(~ "labels", all_of(labels.col))
     }
     if(is.na(scores.col)) {
       cat("Column with scores not specified. Taking the first column.\n")
@@ -67,7 +67,7 @@ X.evaluate <- function(
         dplyr::rename(score=names(.)[1])
     } else {
       data <- data %>%
-        dplyr::rename(score=!!sym(scores.col))
+        rename_with(~ "score", all_of(scores.col))
     }
     data <- data %>% dplyr::select(score,labels)
     if(length(setdiff(unique(data$labels),c(0,1)))>0) {
