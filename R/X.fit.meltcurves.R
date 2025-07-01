@@ -53,7 +53,7 @@ X.fit.meltcurves=function(
     
     # fit
     fitdata=data.frame(x=tempvector,y=yvector)
-    sigmoid <- fit_sigmoid(fitdata)
+    suppressWarnings(sigmoid <- fit_sigmoid(fitdata))
     initial_sigmoid <- sigmoid
     
     # outlier removal
@@ -70,7 +70,7 @@ X.fit.meltcurves=function(
         yOut <- range.scale(yvector[-outpar])
         tOut <- tempvector[-outpar]
         outdata <- data.frame(x=tOut,y=yOut)
-        sigmoid <- fit_sigmoid(outdata)
+        suppressWarnings(sigmoid <- fit_sigmoid(outdata))
         sigmoids[[outpar]] <- sigmoid
         R2Tm_table <- rbind(R2Tm_table,c(outpar,R2nls(sigmoid,outdata)$R2,calcTm(sigmoid)))
       }

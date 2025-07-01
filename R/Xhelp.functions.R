@@ -438,8 +438,10 @@ calcTm <- function(fit) {
     #   a*y+((d)/(1+exp(b*(log(y)-log(e)))))-d/2
     # }
     
-    Tm <- try((uniroot(fffit,interval=c(37,73),a=tilt,b=slope,e=Ti,d=maxprot, extendInt="yes"))$root,
-              silent=TRUE)
+    suppressWarnings(
+      Tm <- try((uniroot(fffit, interval = c(37,73), a = tilt, b = slope, e = Ti, d = maxprot,
+                         extendInt = "yes"))$root, silent = TRUE)
+    )
     if(class(Tm)=="try-error") {
       Tm <- NA
     }

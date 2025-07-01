@@ -56,6 +56,6 @@ Calculate and plot a local subnetwork of a specific protein or proteins of inter
 \examples{
 local.subnetwork <- X.local.network(calibrated.model$data\%>\%dplyr::select(!score),"PF3D7_0412200",
             plot="cytoscape",
-            plot.annotation=plasmoDB_data\%>\%rename(protein=Accession),
+            plot.annotation=plasmoDB_data\%>\%dplyr::rename(protein=Accession),
             plot.cytoscape.path="C://Program Files/Cytoscape_v3.9.1/Cytoscape.exe")
 }

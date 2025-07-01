@@ -55,7 +55,7 @@ for(tp in timepoints) {
 }
 quality.data <- all.fitdata.frame \%>\%
   dplyr::select(protein,condition,replicate,R2) \%>\%
-  rename(quality=R2)
+  dplyr::rename(quality=R2)
 
 data.AIs <- X.AI(data.PCAs$data,complexes, quality.data)
 

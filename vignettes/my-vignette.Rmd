@@ -2,7 +2,7 @@
 title: "Using MAP-X"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MAPX: step-by-step}
+  %\VignetteIndexEntry{Using MAPX: step by step}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,6 +10,7 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  eval=FALSE,
   comment = "#>"
 )
 ```
@@ -39,12 +40,12 @@ timepoints = paste0("tp",c(28,40))
 ```
 
 ### Loading raw data
-Let's first see the procedure with one timepoint. First, load your data in R and configure it such that it is readable by MAPX commands.
+Let's first see the procedure with one timepoint (or condition). First, load your data in R and configure it such that it is readable by MAPX commands.
 The MAPX pipeline working with melting curve data expects the following column names:
-- protein: column with protein IDs
-- description: protein descriptions, such as in fasta headers
-- length: length of the protein (number of amino acids)
-- Ab1 to AbN where N is the number of temperatures measured: columns with raw abundances
+* `protein` – column with protein IDs  
+* `description` – protein descriptions, such as those found in FASTA headers  
+* `length` – length of the protein in number of amino acids  
+* `Ab1` to `AbN` – columns with raw abundance values measured at different temperatures (where `N` is the number of temperatures)
 
 ```{r tp28rep1_init}
 MCdata.raw <- MAPX::meltdata[["tp28"]][[1]] %>%
@@ -160,7 +161,7 @@ cordata <- X.calculate.cors(MCdata.scaled$data)
 ```
 The data frames feature.predictors and cordata should contain the same number of rows and rbind should be sufficient to connect them. MAPX offers a generalized function to connect two data frames that contain two columns that are interchangeable: MAPX::cross_join.
 ```{r tp28_rep1_predictors3}
-all.predictors <- MAPX::cross_join(cordata,feature.predictors,vars=paste0("protein",c(1,2)),mode="full")
+predictors <- MAPX::cross_join(cordata,feature.predictors,vars=paste0("protein",c(1,2)),mode="full")
 ```
 
 ### Looping through multiple samples
@@ -413,7 +414,7 @@ for(ps in precision_scan) {
 }
 ```
 To choose the final map, I calculate a network score that combines different network parameters.
-# 15. Now let's calculate a final network score to choose the final cutoff
+
 ```{r network.score}
 choicedata <- statsdata %>%
   purrr::reduce(bind_rows) %>%
@@ -460,52 +461,70 @@ calibrated.model <- X.calibrate.scores(final.model$data, GS)
 ### Plotting local subnetworks
 Using the calibrated model, we can now find interactors of a specific protein of interest. Let's say, we are interested in a conserved protein of unknown function PF3D7_0412200. Although the function is able to search for cytoscape alone, this is very slow and it is advised to specify the plot.cytoscape.path argument.
 
-local.subnetwork <- X.local.network(calibrated.model$data%>%dplyr::select(!score),"PF3D7_0412200",
-                                    plot="cytoscape",
+```{r local_network}
+
+local.subnetwork <- X.local.network(calibrated.model$data%>%dplyr::select(!score),"PF3D7_0412200", plot="cytoscape",
                                     plot.annotation=plasmoDB_data%>%rename(protein=Accession),
-                                    plot.cytoscape.path="C://Program Files/Cytoscape_v3.9.1/Cytoscape.exe"
-                                    )
+                                    plot.cytoscape.path="C://Program Files/Cytoscape_v3.9.1/Cytoscape.exe")
+```
 
 ## Approaches without machine learning
-For several applications, it does not make sense to spend time and resource to train a model for each sample or replicate: for comparison of assemblies of known protein complexes or for prediction of moonlighting proteins. In these cases, we can use the features extracted for each protein and reduce them into a PCA plot:
+For several applications, it does not make sense to spend time and resources to train a model for each sample or replicate: for comparison of assemblies of known protein complexes or for prediction of moonlighting proteins. In these cases, we can use the features extracted for each protein and reduce them into a PCA plot:
 
 ```{r PCA}
-all.features.data <- data.frame()
-for(tp in timepoints) {
-  for(rep in reps) {
-    all.features.data <- bind_rows(all.features.data,
-                                   all.features[[tp]][[rep]] %>% mutate(replicate=as.character(rep)) %>% mutate(condition=tp)
-    )
-  }
-}
+all.features.data <- all.features %>%
+  lapply(function(x) x %>%
+           rbindlist(idcol="replicate")) %>%
+  rbindlist(idcol="condition") %>%
+  mutate(replicate=as.character(replicate))
+
 data.PCAs <- X.PCA.reduction(all.features.data,plot=TRUE,plot.complexes=complexes)
 ```
 
 ## Assembly index
-The spread of the subunits on PCA plots nicely visualises the assembly state of the protein complexes. To put a number on it, we can calculate Euclidean distance from the centroid of the points of a protein complex and compare it to Euclidean distances of randomly selected proteins. Then, the program compares the random and complex-related Euclidean distances using Z-statistics to calculate the assembly factor. If multiple replicates are available, their averaging can be weighted by the data quality. In this case, we use the R2 goodness of fit that is calculated during curve fitting. The quality.data has two columns, protein and quality.
+The spread of the subunits on PCA plots nicely visualises the assembly state of the protein complexes. To put a number on it, we can calculate Euclidean distances between the subunits of the protein complex and compare them to Euclidean distances between the subuntis and randomly selected proteins. Then, the program compares these semi-random and complex-related Euclidean distances using Z-statistics to calculate the assembly index. If multiple replicates are available, their averaging can be weighted by the data quality. In this case, we use the R2 goodness of fit that is calculated during curve fitting. The quality.data has two columns, protein and quality.
 
 ```{r quality.data}
-all.fitdata.frame <- data.frame()
-for(tp in timepoints) {
-  for(rep in reps) {
-    all.fitdata.frame <- bind_rows(all.fitdata.frame,
-                                   all.fitdata[[tp]][[rep]] %>% mutate(replicate=as.character(rep)) %>% mutate(condition=tp)
-    )
-  }
-}
+all.fitdata.frame <- all.fitdata %>%
+  lapply(function(x) x %>%
+           rbindlist(idcol="replicate")) %>%
+  rbindlist(idcol="condition") %>%
+  mutate(replicate=as.character(replicate))
+
 quality.data <- all.fitdata.frame %>%
   dplyr::select(protein,condition,replicate,R2) %>%
   rename(quality=R2)
 ```
 
+It only makes sense to look at well-defined stable complexes using this approach. This code makes a sub-selection:
+
+```{r complexes.subselection}
+sel.cpxs <- MAPX::complexes[c("ribosome_full",  "IF2","IF3","EF1", "MSC_M","MSC_Q", "E2_enzyme", "apicoplast_ribosome", "SSU_UtpB", #protein turnover
+                                "proteasome", "proteasome_reg", # protein degradation
+                                "T_complex","R2TP","Hsp_Hop","prefoldin", # protein folding
+                                "MCM", "histones_H2Zdimer","histones_H2dimer","condensin1","condensin2","RuvBL_trimer",# chromatin regulation
+                                "RFC", # DNA replication
+                                "RNR","RNApolII", "NCBP","H_ACA", # RNA synthesis
+                                "spliceosome_snRNP_core","spliceosome_snRNP_U6_core", "spliceosome_U2_snRNP_S3Fa", # RNA splicing
+                                "qTRT", "KEOPS", "TRM", # RNA modification
+                                "RNH","exosome", #RNA degradation
+                                "SUMO_activating_enzyme", # post-translational modification
+                                "SRP","COPI","COPII","retromer","AP1", "PAM", # protein trafficking
+                                "NatA","glyco_ENO_PK","KDH","BCKDH","VTA", "PanK", # metabolism
+                                "microtubules", "basal_complex", #structural
+                                "PROSC", "HDP_complex", "CLAG_core","RON","RAP")] #plasmodium specific 
+
+```
+
 The function X.AI will calculate the assembly indexes
+
 ```{r AI}
-data.AIs <- X.AI(data.PCAs$data,complexes, quality.data)
+data.AIs <- X.AI(data.PCAs$data,sel.cpxs, quality.data, trials=150, weights=data.PCAs$var.explained)
 ```
 
 ### Prediction of moonlighting subunits
 PCA data can also be used to predict moonlighting subunits of known protein complexes. For this, the PCA
 ```{r ML}
-data.moonlighting <- X.predict.moonlighters(data=data.PCAs$data,complexes=table1_complexes,min.reps=2,min.conditions=2,weights=data.PCAs$var.explained,
+data.moonlighting <- X.predict.moonlighters(data=data.PCAs$data,complexes=sel.cpxs,min.reps=2,min.conditions=2,weights=data.PCAs$var.explained,
                                             p.adj.method="BH")
 ```
