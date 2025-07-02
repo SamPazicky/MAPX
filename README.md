@@ -22,9 +22,15 @@ You can install the development version of MAPX from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("SamPazicky/MAPX")
+devtools::install_github("SamPazicky/MAPX", build_vignettes=TRUE)
 ```
 
 ## citing MAPX
 
-This work has not been published yet.
+## Citing MAPX
+
+The MAPX package is described in the following preprint (not yet
+peer-reviewed):
+
+🔗 [View the
+preprint](https://www.researchsquare.com/article/rs-5659511/v1)
