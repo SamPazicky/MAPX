@@ -1,6 +1,8 @@
 MAPX
 ================
 
+[![License:
+MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # What is MAPX?
@@ -26,6 +28,11 @@ You can install the development version of MAPX from
 # install.packages("devtools")
 devtools::install_github("SamPazicky/MAPX", build_vignettes=TRUE)
 ```
+
+## Documentation
+
+Visit the [MAPX website](https://sampazicky.github.io/MAPX/) for
+detailed documentation and vignettes.
 
 ## Citing MAPX
 
