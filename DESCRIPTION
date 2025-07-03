@@ -3,6 +3,10 @@ Type: Package
 Title: Meltome-assisted profiling of protein complexes
 Version: 0.1.0.0
 Encoding: UTF-8
+Authors@R: person("Samuel", "Pazicky", 
+                  email = "samuel.pazicky@ntu.edu.sg", 
+                  role = c("aut", "cre"))
+URL: https://SamPazicky.github.io/MAPX, https://github.com/SamPazicky/MAPX
 Imports:
   tidyverse,
   visNetwork,

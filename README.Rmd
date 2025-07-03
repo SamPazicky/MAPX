@@ -1,4 +1,5 @@
 ---
+title: "MAPX"
 output: github_document
 ---
 
@@ -31,8 +32,6 @@ You can install the development version of MAPX from [GitHub](https://github.com
 # install.packages("devtools")
 devtools::install_github("SamPazicky/MAPX", build_vignettes=TRUE)
 ```
-
-## citing MAPX
 
 ## Citing MAPX
 

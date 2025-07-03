@@ -1,3 +1,5 @@
+MAPX
+================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -24,8 +26,6 @@ You can install the development version of MAPX from
 # install.packages("devtools")
 devtools::install_github("SamPazicky/MAPX", build_vignettes=TRUE)
 ```
-
-## citing MAPX
 
 ## Citing MAPX
 
