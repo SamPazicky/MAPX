@@ -41,7 +41,7 @@ X.average.reps <- function(
       eval <- X.evaluate(to.evaluate, scores.col=scores.col,labels.col=labels.col, eval.metric=eval.metric, plot=TRUE)
       
       output <- list(
-        data=data,
+        data=data[[1]],
         eval.metric=eval$eval.metric,
         eval.data=eval$curvedata,
         plot=eval$plot

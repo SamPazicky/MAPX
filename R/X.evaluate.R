@@ -62,9 +62,9 @@ X.evaluate <- function(
         rename_with(~ "labels", all_of(labels.col))
     }
     if(is.na(scores.col)) {
-      cat("Column with scores not specified. Taking the first column.\n")
+      cat("Column with scores not specified. Taking the second-to-last column.\n")
       data <- data %>%
-        dplyr::rename(score=names(.)[1])
+        dplyr::rename(score=names(.)[ncol(.)-1])
     } else {
       data <- data %>%
         rename_with(~ "score", all_of(scores.col))
