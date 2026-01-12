@@ -9,7 +9,7 @@
 #' @param condition.col Character string: If the data has more conditions, what is the name of the column containing conditions?
 #' @param min.conditions Numeric: At least how many conditions must contain the predicted interaction to not be filtered out?
 #' @param plot Character string: "cytoscape" for plotting using cytoscape and "visnetwork" for plotting using visNetwork package. NULL for no plotting.
-#' @param plot.annotation Data frame with column 'id' with protein IDs and any other annotation columns.
+#' @param plot.annotation Data frame with column 'protein' with protein IDs and any other annotation columns.
 #' @param plot.design.params List: as design.params in X.plot.network.
 #' @param plot.cytoscape.path String: As in X.plot.network.
 #' @param plot.cytoscape.waittime Numeric: How many second should R wait for the cytoscape to start.

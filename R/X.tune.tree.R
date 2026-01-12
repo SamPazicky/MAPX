@@ -195,7 +195,7 @@ X.tune.tree <- function(
       customPlot + ylim(c(0,1)) +
       scale_y_continuous(name=eval.metric)
     
-    AUC_plot_SDs <- AUC_table %>%
+    AUC_plot_SDs <- result.table %>%
       ggplot() + geom_point(mapping=aes(x=!!sym(current_tune_pars),y=sdAUC), size=3) +
       geom_line(mapping=aes(x=!!sym(current_tune_pars),y=sdAUC)) +
       customPlot + ylim(c(0,0.15)) +

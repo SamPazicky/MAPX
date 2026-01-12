@@ -24,10 +24,10 @@ X.pairwise.to.complexes <- function(
     }
     if(is.na(names.col)) {
       data <- as.data.frame(data) %>%
-        select(protein1,protein2)
+        dplyr::select(protein1,protein2)
     } else {
       data <- as.data.frame(data) %>%
-        select(protein1,protein2,all_of(names.col))
+        dplyr::select(protein1,protein2,all_of(names.col))
     }
 
   }
@@ -39,7 +39,7 @@ X.pairwise.to.complexes <- function(
   # rebuild complexes from table
   while(building) {
     
-    proteins <- data %>% slice_head(n=1) %>% select(c("protein1","protein2")) %>% unlist() %>% unname()
+    proteins <- data %>% slice_head(n=1) %>% dplyr::select(c("protein1","protein2")) %>% unlist() %>% unname()
     if(!is.na(names.col)) {
       complexname = data %>% slice_head(n=1) %>% dplyr::select(all_of(c(names.col))) %>% unlist() %>% unname()
     } else {
@@ -52,7 +52,7 @@ X.pairwise.to.complexes <- function(
     while(adding) {
       
       group_proteins <- data %>% filter(protein1 %in% proteins | protein2 %in% proteins) %>%
-        select(c("protein1","protein2")) %>% unlist() %>% unname() %>% union(proteins) %>% unique()
+        dplyr::select(c("protein1","protein2")) %>% unlist() %>% unname() %>% union(proteins) %>% unique()
       if(length(group_proteins)!=0) {
         proteins <- group_proteins
         if(length(proteins)>current_length) {

@@ -31,8 +31,7 @@ detailed documentation and vignettes.
 
 ## Citing MAPX
 
-The MAPX package is described in the following preprint (not yet
-peer-reviewed):
+Pazicky et al. MAP-X reveals distinct protein complex dynamics across
+Plasmodium falciparum blood stages. Nat Microbiol 10, 3229–3244 (2025).
 
-🔗 [View the
-preprint](https://www.researchsquare.com/article/rs-5659511/v1)
+🔗 [View the publication](https://doi.org/10.1038/s41564-025-02173-7)
