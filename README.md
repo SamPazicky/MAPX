@@ -29,6 +29,13 @@ devtools::install_github("SamPazicky/MAPX", build_vignettes=TRUE)
 Visit the [MAPX website](https://sampazicky.github.io/MAPX/) for
 detailed documentation and vignettes.
 
+## PlasMAPX: MAP-X prediction in P. falciparum IDC
+
+Interactive visual representations of MAP-X predictions for P.
+falciparum IDC
+
+🔗 [plasMAPX website](https://biosam.shinyapps.io/plasmapx_shinyapp/)
+
 ## Citing MAPX
 
 Pazicky et al. MAP-X reveals distinct protein complex dynamics across
